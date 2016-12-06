@@ -18,7 +18,6 @@
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.4.1f1</UnityVersion>
     <RootNamespace></RootNamespace>
-    <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -64,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Script\ATBTimer.cs" />
+    <Compile Include="Assets\Script\ATBUI.cs" />
     <Compile Include="Assets\Script\Block\AttackBlock.cs" />
     <Compile Include="Assets\Script\Block\Block.cs" />
     <Compile Include="Assets\Script\BlockDataBase.cs" />
