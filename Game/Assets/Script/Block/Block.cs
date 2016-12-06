@@ -1,7 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-abstract public class Block : MonoBehaviour {
+public enum Buff { 
+    
+}
+public enum DeBuff { 
+    
+}
+[System.Serializable]
+public class Block {
     public string name;
     public string description;
 
