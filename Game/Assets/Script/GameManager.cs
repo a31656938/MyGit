@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         _Inst = this;
-        blockDataBase = this.GetComponent<BlockDataBase>();
+        blockDataBase = GameObject.Find("BlockDataBase").GetComponent<BlockDataBase>();
         uiManager = GameObject.Find("UIManager").GetComponent<UIManager>();
         characterManager = GameObject.Find("CharacterManager").GetComponent<CharacterManager>();
         atbTimer = this.GetComponent<ATBTimer>();
@@ -28,14 +28,23 @@ public class GameManager : MonoBehaviour {
         blockDataBase.Initial();
         uiManager.Initial();
         atbTimer.Initial(10.0f);
+
+        ChangeNowBlockGroup("Attack");
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
         characterManager.MyUpdate();
-        blockDataBase.MyUpdate();
         atbTimer.MyUpdate();
         uiManager.MyUpdate();
 	}
+    public void ChangeNowBlockGroup(string group) {
+        blockDataBase.setAllActive(false);
+
+        if (group == "Attack") blockDataBase.attackParent.gameObject.SetActive(true);
+        else if (group == "Buff") blockDataBase.buffParent.gameObject.SetActive(true);
+
+        uiManager.nowGroupName.text = group;
+    }
 }

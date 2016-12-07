@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class UIManager : MonoBehaviour {
     public ATBUI atbUI;
+    public Text nowGroupName;
     public Transform program;
     public GameObject gridPrefab;
 
@@ -15,7 +16,7 @@ public class UIManager : MonoBehaviour {
         CreateGrid();
        
 
-            atbUI.Initial();
+        atbUI.Initial();
 	}
 	
 	// Update is called once per frame
@@ -42,4 +43,5 @@ public class UIManager : MonoBehaviour {
             tempRectTransform.anchoredPosition3D = new Vector3(offsetX * i, 0, 0);
         }
     }
+
 }

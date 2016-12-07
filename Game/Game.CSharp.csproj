@@ -68,6 +68,9 @@
     <Compile Include="Assets\Script\Block\AttackBlock.cs" />
     <Compile Include="Assets\Script\Block\Block.cs" />
     <Compile Include="Assets\Script\Block\BlockDataBase.cs" />
+    <Compile Include="Assets\Script\Block\BlockObj.cs" />
+    <Compile Include="Assets\Script\Block\BuffBlock.cs" />
+    <Compile Include="Assets\Script\Buff\Buff.cs" />
     <Compile Include="Assets\Script\Character\Character.cs" />
     <Compile Include="Assets\Script\Character\CharacterManager.cs" />
     <Compile Include="Assets\Script\Character\Monster.cs" />

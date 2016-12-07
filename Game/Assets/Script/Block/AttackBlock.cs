@@ -5,9 +5,8 @@ using System.Collections;
 public class AttackBlock : Block {
     public int attack;
     
-    public AttackBlock(string name, string description,int attack) {
-        this.name = name;
-        this.description = description;
+    public AttackBlock(string name, string description,int idle ,int attack) {
+        BaseConstructor(name, description, idle);
         this.attack = attack;
     }
 }
