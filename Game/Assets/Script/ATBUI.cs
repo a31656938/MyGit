@@ -27,17 +27,20 @@ public class ATBUI : MonoBehaviour {
 
     // Update is called once per frame
     public void MyUpdate(){
-        float bound = barWidth * perctange;
         for (int i = 0; i < atbIcons.Count; i++) {
             ATBCharacter nowData = atbTimer.atbs[i];
-            float position = 0;
-            if (nowData.IsIdle){
-                position = (1 - nowData.nowTime / atbTimer.maxIdleTime) * bound;
-            }
-            else {
-                position = bound + (barWidth - bound) * (1 - nowData.nowTime / nowData.castTime);
-            }
-            atbIcons[i].anchoredPosition3D = new Vector3(position, 0, 0);
+            float t = positionT(nowData, this.perctange);
+            atbIcons[i].anchoredPosition3D = new Vector3(barWidth * t, 0, 0); 
         }
+    }
+    float positionT(ATBCharacter nowData , float perctange){
+        float t = 0;
+        if (nowData.IsIdle){
+            t = (1 - nowData.nowTime / atbTimer.maxIdleTime) * perctange;
+        }
+        else {
+            t = perctange + (1 - perctange) * (1 - nowData.nowTime / nowData.castTime);
+        }
+        return t;
     }
 }
