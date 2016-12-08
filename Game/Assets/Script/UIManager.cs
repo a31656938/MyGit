@@ -6,19 +6,20 @@ using System.Collections.Generic;
 public class UIManager : MonoBehaviour {
     public ATBUI atbUI;
     public Text nowGroupName;
+    public Text startButtonText;
     public Transform program;
     public GameObject gridPrefab;
-
+    public Animator blocksAnimator;
 	// Use this for initialization
 	public void Initial () {
         atbUI = this.GetComponent<ATBUI>();
+        startButtonText.text = "出擊";
 
-        CreateGrid();
-       
+        CreateGrid();   
 
         atbUI.Initial();
 	}
-	
+
 	// Update is called once per frame
 	public void MyUpdate () {
         atbUI.MyUpdate();
@@ -43,5 +44,4 @@ public class UIManager : MonoBehaviour {
             tempRectTransform.anchoredPosition3D = new Vector3(offsetX * i, 0, 0);
         }
     }
-
 }

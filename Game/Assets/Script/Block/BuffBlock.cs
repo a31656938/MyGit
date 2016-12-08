@@ -6,9 +6,9 @@ public class BuffBlock : Block
 {
     public bool benefit;
 
-    public BuffBlock(string name, string description, int idle, bool benefit)
+    public BuffBlock(string name, string description, int cast, bool benefit)
     {
-        BaseConstructor(name, description, idle);
+        BaseConstructor(name, description, cast);
         this.benefit = benefit;
     }
 }

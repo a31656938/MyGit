@@ -6,13 +6,17 @@ public class Block {
     public string name;
     public string description;
     public Sprite icon;
-    public int idle;
+    public int cast;
 
-    public void BaseConstructor(string name, string description, int idle) {
+    public void BaseConstructor(string name, string description, int cast)
+    {
         this.name = name;
         this.description = description;
-        this.idle = idle;
+        this.cast = cast;
         icon = Resources.Load<Sprite>("BlockIcon/" + name);
+    }
+    public string GetDescription() {
+        return name + "\n" + description;
     }
 
 }

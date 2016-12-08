@@ -30,7 +30,9 @@ public class ATBUI : MonoBehaviour {
         for (int i = 0; i < atbIcons.Count; i++) {
             ATBCharacter nowData = atbTimer.atbs[i];
             float t = positionT(nowData, this.perctange);
-            atbIcons[i].anchoredPosition3D = new Vector3(barWidth * t, 0, 0); 
+
+            if (i == 3) atbIcons[i].anchoredPosition3D = new Vector3(barWidth * t, -50, 0);
+            else atbIcons[i].anchoredPosition3D = new Vector3(barWidth * t, 50, 0); 
         }
     }
     float positionT(ATBCharacter nowData , float perctange){

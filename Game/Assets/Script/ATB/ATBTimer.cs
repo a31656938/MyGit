@@ -12,12 +12,9 @@ public class ATBTimer : MonoBehaviour {
 
         foreach (Character character in GameManager.Inst.characterManager.characters) {
             ATBCharacter atb = character.atb;
-            maxIdleTime = Mathf.Max(atb.idleTime, maxIdleTime);
-
-            atb.nowTime = atb.idleTime;
-            atb.IsIdle = true;
             atbs.Add(atb);
         }
+
     }
     public void MyUpdate() {
         foreach (ATBCharacter atb in atbs) {
@@ -25,7 +22,15 @@ public class ATBTimer : MonoBehaviour {
             if (atb.nowTime < 0) atb.change();
         }
     }
+    public void ReStart() {
+        foreach (ATBCharacter atb in atbs) {
+            maxIdleTime = Mathf.Max(atb.idleTime, maxIdleTime);
+            atb.nowTime = atb.idleTime;
+            atb.IsIdle = true;
+        }
+    }
 }
+
 [System.Serializable]
 public class ATBCharacter {
     public bool IsIdle;
