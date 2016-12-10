@@ -19,6 +19,8 @@ public class CharacterManager : MonoBehaviour {
             characters.Add(character);
             characterUIObjs.Add(UIObj);
 
+            for (int j = 0; j < TotalMemory; j++) character.process.Add(null); 
+
             UIObj.GetComponent<Image>().sprite = character.characterUI;
         }
 	}

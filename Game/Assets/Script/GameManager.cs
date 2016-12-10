@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
     private static GameManager _Inst;
@@ -10,6 +11,8 @@ public class GameManager : MonoBehaviour {
     public ATBTimer atbTimer;
     public UIRayCast uiRayCast;
     public bool start;
+    public Vector2 nowGrid;
+    public Block nowDragBlock;
     public static GameManager Inst {
         get {
             if (_Inst == null) { Debug.Log("Gamanager Singleton error"); }
@@ -46,21 +49,44 @@ public class GameManager : MonoBehaviour {
         }
         else // 編輯 
         {
+            List<BlockObj> blockObjs = new List<BlockObj>();
             foreach (RaycastResult hit in uiRayCast.Raycast()) {
+                if (hit.gameObject.name == "program") nowGrid = CalculateGrid();
                 BlockObj blockObj = hit.gameObject.GetComponent<BlockObj>();
-                if (blockObj != null) {
-                    Debug.Log(blockObj.block.GetDescription());
-                
-                
-                }
-            
+                if (blockObj != null) blockObjs.Add(blockObj); 
             }
-        
-        
-        
+            if (blockObjs.Count == 1 && nowDragBlock == null) uiManager.ChangeDescription(blockObjs[0].block);
+            else uiManager.HideDescription();
+            
+            if(blockObjs.Count==1){
+                if (Input.GetMouseButtonDown(0)) {
+                    nowDragBlock = blockObjs[0].block;
+                    uiManager.dragBlock.SetActive(true);
+                }
+            }
+            if (nowDragBlock != null)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    uiManager.UpdateDragBlock(nowDragBlock);
+                }
+                else if (Input.GetMouseButtonUp(0))
+                {
+                    nowDragBlock = null;
+                    uiManager.dragBlock.SetActive(false);
+                }
+            }
+            
         }
     }
 
+    Vector2 CalculateGrid() {
+        Vector2 programC = new Vector2(Input.mousePosition.x - 1280, Input.mousePosition.y);
+        int x = (int)(programC.x / (640.0f / 3.0f)); 
+        int y = (int)(programC.y / (1020.0f / (float)characterManager.TotalMemory));
+        Vector3 re = new Vector2(x, characterManager.TotalMemory - y -1); 
+        return re;
+    }
 
     public void ChangeNowBlockGroup(int index) {
         blockDataBase.setAllActive(false);

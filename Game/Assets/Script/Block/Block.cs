@@ -16,7 +16,7 @@ public class Block {
         icon = Resources.Load<Sprite>("BlockIcon/" + name);
     }
     public string GetDescription() {
-        return name + "\n" + description;
+        return description;
     }
 
 }

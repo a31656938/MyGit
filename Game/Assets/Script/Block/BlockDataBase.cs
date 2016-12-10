@@ -45,7 +45,7 @@ public class BlockDataBase : MonoBehaviour{
         blockObj.block = block;
         offset -= 10;
         float Y = 1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
-        temp.GetComponent<RectTransform>().sizeDelta = new Vector2(200, Y * block.cast);
+        temp.GetComponent<RectTransform>().sizeDelta = new Vector2(180, Y * block.cast);
         temp.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(60,offset,0);
         offset -= Y * block.cast;
 
