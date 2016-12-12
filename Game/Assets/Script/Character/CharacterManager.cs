@@ -5,24 +5,24 @@ using System.Collections.Generic;
 
 public class CharacterManager : MonoBehaviour {
     public int TotalMemory;
-    public Transform characterUIObjParent;
+    public Transform characterObjParent;
     public List<Character> characters;
-    public List<GameObject> characterUIObjs;
+    public List<GameObject> characterObjs;
 	// Use this for initialization
 	public void Initial () {
         characters = new List<Character>();
 
         for (int i = 0; i < this.transform.childCount; i++){
             Character character = this.transform.GetChild(i).GetComponent<Character>();
-            GameObject UIObj = characterUIObjParent.GetChild(i).gameObject;
-            character.characterUIObj = UIObj;
+            Transform tempParent = characterObjParent.GetChild(i).transform;
+            GameObject characterObj = (GameObject)Instantiate(character.characterPrefab, tempParent, false);
+            character.characterObj = characterObj;
             characters.Add(character);
-            characterUIObjs.Add(UIObj);
+            characterObjs.Add(characterObj);
 
             for (int j = 0; j < TotalMemory; j++) character.process.Add(null); 
-
-            UIObj.GetComponent<Image>().sprite = character.characterUI;
         }
+
 	}
 
     // Update is called once per frame

@@ -68,6 +68,7 @@
     <Compile Include="Assets\Script\Block\AttackBlock.cs" />
     <Compile Include="Assets\Script\Block\Block.cs" />
     <Compile Include="Assets\Script\Block\BlockDataBase.cs" />
+    <Compile Include="Assets\Script\Block\BlockDecorator.cs" />
     <Compile Include="Assets\Script\Block\BlockObj.cs" />
     <Compile Include="Assets\Script\Block\BuffBlock.cs" />
     <Compile Include="Assets\Script\Buff\Buff.cs" />

@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour {
     public ATBTimer atbTimer;
     public UIRayCast uiRayCast;
     public bool start;
-    public Vector2 nowGrid;
     public Block nowDragBlock;
     public static GameManager Inst {
         get {
@@ -49,6 +48,8 @@ public class GameManager : MonoBehaviour {
         }
         else // 編輯 
         {
+            //指到方塊??
+            Vector2 nowGrid = new Vector2(-1,-1);
             List<BlockObj> blockObjs = new List<BlockObj>();
             foreach (RaycastResult hit in uiRayCast.Raycast()) {
                 if (hit.gameObject.name == "program") nowGrid = CalculateGrid();
@@ -58,6 +59,7 @@ public class GameManager : MonoBehaviour {
             if (blockObjs.Count == 1 && nowDragBlock == null) uiManager.ChangeDescription(blockObjs[0].block);
             else uiManager.HideDescription();
             
+            //拖曳方塊判斷
             if(blockObjs.Count==1){
                 if (Input.GetMouseButtonDown(0)) {
                     nowDragBlock = blockObjs[0].block;
@@ -72,14 +74,34 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (Input.GetMouseButtonUp(0))
                 {
-                    nowDragBlock = null;
+                    SetBlock(nowGrid, nowDragBlock);
                     uiManager.dragBlock.SetActive(false);
+                    nowDragBlock = null;
                 }
             }
             
         }
     }
-
+    void SetBlock(Vector2 nowGrid ,Block block) {
+        if (nowGrid == new Vector2(-1, -1)) return;
+        int nowStart = (int)nowGrid.y;
+        int nowEnd = (int)nowGrid.y+block.cast-1;
+        bool flag = true;
+        for (int i = 0; i < characterManager.TotalMemory; i++) {
+            Block exist =characterManager.characters[(int)nowGrid.x].process[i];
+            if (exist.name != null) { 
+                int existStart = i;
+                int existEnd = i+exist.cast-1;
+                if (existStart < nowEnd && existEnd > nowStart){
+                    flag = false;
+                    break;
+                }
+            }
+        }
+        if (flag) {
+            characterManager.characters[(int)nowGrid.x].process[(int)nowGrid.y] = block;
+        }
+    }
     Vector2 CalculateGrid() {
         Vector2 programC = new Vector2(Input.mousePosition.x - 1280, Input.mousePosition.y);
         int x = (int)(programC.x / (640.0f / 3.0f)); 

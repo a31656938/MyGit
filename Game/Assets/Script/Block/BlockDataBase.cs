@@ -31,6 +31,7 @@ public class BlockDataBase : MonoBehaviour{
         buffBlockGroup.Add((BuffBlock)CreateBlock(new BuffBlock("PowerDown", "感覺全身一點力氣也沒有", 4, false)));
         buffBlockGroup.Add((BuffBlock)CreateBlock(new BuffBlock("SpeedUp", "獲得風馳電掣般的速度", 3, true)));
         panelHeight.Add((int)Mathf.Abs(offset - 10));
+
     }
 
     Block CreateBlock(Block block){
