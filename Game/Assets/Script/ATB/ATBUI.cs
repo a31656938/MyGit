@@ -37,6 +37,8 @@ public class ATBUI : MonoBehaviour {
     }
     float positionT(ATBCharacter nowData , float perctange){
         float t = 0;
+        if (nowData.castTime == 0 || nowData.idleTime == 0) return t;
+
         if (nowData.IsIdle){
             t = (1 - nowData.nowTime / atbTimer.maxIdleTime) * perctange;
         }

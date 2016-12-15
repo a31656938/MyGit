@@ -34,6 +34,12 @@ public class GameManager : MonoBehaviour {
         uiManager.Initial();
         atbTimer.Initial(10.0f);
 
+        AttackBlock temp0 = new AttackBlock("oil", "000", 3, 5); 
+        IFBlock temp = new IFBlock("00", "0000", 2, temp0);
+        MultipleBlock temp1 = new MultipleBlock("11", "1111", 1, temp); 
+        uiManager.showBlockUI(temp1, uiManager.program, Vector3.zero); 
+
+
         ChangeNowBlockGroup(0);
 	}
 	
@@ -48,7 +54,7 @@ public class GameManager : MonoBehaviour {
         }
         else // 編輯 
         {
-            //指到方塊??
+            // IF指到方塊群組方塊
             Vector2 nowGrid = new Vector2(-1,-1);
             List<BlockObj> blockObjs = new List<BlockObj>();
             foreach (RaycastResult hit in uiRayCast.Raycast()) {
@@ -56,12 +62,13 @@ public class GameManager : MonoBehaviour {
                 BlockObj blockObj = hit.gameObject.GetComponent<BlockObj>();
                 if (blockObj != null) blockObjs.Add(blockObj); 
             }
-            if (blockObjs.Count == 1 && nowDragBlock == null) uiManager.ChangeDescription(blockObjs[0].block);
+            if (blockObjs.Count >= 1 && nowDragBlock == null) uiManager.ChangeDescription(blockObjs[0].block);
             else uiManager.HideDescription();
             
             //拖曳方塊判斷
             if(blockObjs.Count==1){
                 if (Input.GetMouseButtonDown(0)) {
+                    if (nowGrid != new Vector2(-1, -1)) removeBlock(nowGrid);
                     nowDragBlock = blockObjs[0].block;
                     uiManager.dragBlock.SetActive(true);
                 }
@@ -82,24 +89,53 @@ public class GameManager : MonoBehaviour {
             
         }
     }
-    void SetBlock(Vector2 nowGrid ,Block block) {
-        if (nowGrid == new Vector2(-1, -1)) return;
-        int nowStart = (int)nowGrid.y;
-        int nowEnd = (int)nowGrid.y+block.cast-1;
-        bool flag = true;
-        for (int i = 0; i < characterManager.TotalMemory; i++) {
-            Block exist =characterManager.characters[(int)nowGrid.x].process[i];
-            if (exist.name != null) { 
+    void removeBlock(Vector2 position) {
+
+        for (int i = 0; i < characterManager.TotalMemory; i++)
+        {
+            Block exist = characterManager.characters[(int)position.x].process[i];
+            if (exist.name != null){
                 int existStart = i;
-                int existEnd = i+exist.cast-1;
-                if (existStart < nowEnd && existEnd > nowStart){
-                    flag = false;
+                int existEnd = i + exist.GetCast() - 1;
+                if (existStart <= position.y && position.y <= existEnd){
+                    characterManager.characters[(int)position.x].process[i] = new Block();
                     break;
                 }
             }
         }
-        if (flag) {
-            characterManager.characters[(int)nowGrid.x].process[(int)nowGrid.y] = block;
+
+        uiManager.UpdateMemory();
+    }
+    void SetBlock(Vector2 nowGrid ,Block block) {
+        if (nowGrid == new Vector2(-1, -1)) return;
+        int nowStart = (int)nowGrid.y;
+        int nowEnd = (int)nowGrid.y+block.GetCast() - 1;
+        // 超過最底
+        if (nowEnd >= characterManager.TotalMemory) return;
+        // 0 不存
+        // 1 存
+        // 2 in
+        int flag = 1;
+        for (int i = 0; i < characterManager.TotalMemory; i++) {
+            Block exist =characterManager.characters[(int)nowGrid.x].process[i];
+            if (exist.name != null) { 
+                int existStart = i;
+                int existEnd = i+exist.GetCast() - 1;
+                if (existStart <= nowEnd && existEnd >= nowStart){
+                    if (typeof(BlockDecorator).IsAssignableFrom(exist.GetType())) {
+                        ((BlockDecorator)exist).SetIn(block);
+                        flag = 2;
+                    }
+                    else flag = 0;
+                    break;
+                }
+            }
+        }
+        // 更改 memory  更新UI
+        if (flag !=0) {
+            if (flag == 1)characterManager.characters[(int)nowGrid.x].process[(int)nowGrid.y] = block;
+            
+            uiManager.UpdateMemory();
         }
     }
     Vector2 CalculateGrid() {
@@ -113,15 +149,21 @@ public class GameManager : MonoBehaviour {
     public void ChangeNowBlockGroup(int index) {
         blockDataBase.setAllActive(false);
 
-        if (index == 0)
-        {
+        if (index == 0){
             blockDataBase.attackParent.gameObject.SetActive(true);
             uiManager.nowGroupName.text = "Attack";
         }
-        else if (index == 1)
-        {
+        else if (index == 1){
             blockDataBase.buffParent.gameObject.SetActive(true);
             uiManager.nowGroupName.text = "Buff";
+        }
+        else if (index == 2) {
+            blockDataBase.IFParent.gameObject.SetActive(true);
+            uiManager.nowGroupName.text = "IF";
+        }
+        else if (index == 3){
+            blockDataBase.multipleParent.gameObject.SetActive(true);
+            uiManager.nowGroupName.text = "Multiple";
         }
         blockDataBase.nowBlocks.GetComponent<RectTransform>().sizeDelta = new Vector2(260,blockDataBase.panelHeight[index]);
     }
@@ -129,6 +171,7 @@ public class GameManager : MonoBehaviour {
         start = !start;
         uiManager.blocksAnimator.SetTrigger("hide");
         if (start){
+            characterManager.calculateTime();
             atbTimer.ReStart();
             uiManager.startButtonText.text = "撤退";
         }

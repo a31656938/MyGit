@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class CharacterManager : MonoBehaviour {
+    private float normalSpeed = 0.8f;
+    
     public int TotalMemory;
     public Transform characterObjParent;
     public List<Character> characters;
@@ -20,11 +22,23 @@ public class CharacterManager : MonoBehaviour {
             characters.Add(character);
             characterObjs.Add(characterObj);
 
-            for (int j = 0; j < TotalMemory; j++) character.process.Add(null); 
+            for (int j = 0; j < TotalMemory; j++) character.process.Add(new Block()); 
         }
 
 	}
-
+    public void calculateTime() {
+        foreach (Character c in characters) {
+            int time = 0;
+            for (int i = 0; i < TotalMemory; i++){
+                Block exist = c.process[i];
+                if (exist.name != null){
+                    time += exist.GetCast();
+                }
+            }
+            c.atb.Set(normalSpeed, time, time);
+        }
+    
+    }
     // Update is called once per frame
     public void MyUpdate()
     {

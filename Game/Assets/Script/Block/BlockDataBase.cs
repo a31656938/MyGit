@@ -10,15 +10,19 @@ public class BlockDataBase : MonoBehaviour{
     public Transform nowBlocks;
     public Transform attackParent;
     public Transform buffParent;
+    public Transform IFParent;
+    public Transform multipleParent;
     public List<AttackBlock> attackBlockGroup;
     public List<BuffBlock> buffBlockGroup;
+    public List<IFBlock> IFBlockGroup;
+    public List<MultipleBlock> MultipleBlockGroup;
     public List<int> panelHeight;
     float offset = 0;
 	// Use this for initialization
 	public void Initial () {
         panelHeight = new List<int>();
         offset = 0;
-        //attackBlockGroup = new List<AttackBlock>();
+        attackBlockGroup = new List<AttackBlock>();
         attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("Oil", "被油瓶砸到還是會痛的，身體還會油油的", 2, 5)));
         attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("FireBall", "隨處可見的火球術", 3, 20)));
         attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("WaterGun", "強勁的噴射水槍攻擊", 4, 30)));
@@ -32,26 +36,36 @@ public class BlockDataBase : MonoBehaviour{
         buffBlockGroup.Add((BuffBlock)CreateBlock(new BuffBlock("SpeedUp", "獲得風馳電掣般的速度", 3, true)));
         panelHeight.Add((int)Mathf.Abs(offset - 10));
 
+        offset = 0;
+        IFBlockGroup = new List<IFBlock>();
+        IFBlockGroup.Add((IFBlock)CreateBlock(new IFBlock("如果0000", "0000000", 1,null)));
+        IFBlockGroup.Add((IFBlock)CreateBlock(new IFBlock("如果1111", "1111111", 2, null)));
+        panelHeight.Add((int)Mathf.Abs(offset - 10));
+
+        offset = 0;
+        MultipleBlockGroup = new List<MultipleBlock>();
+        MultipleBlockGroup.Add((MultipleBlock)CreateBlock(new MultipleBlock("重作0000", "0000000", 1, null)));
+        MultipleBlockGroup.Add((MultipleBlock)CreateBlock(new MultipleBlock("重作1111", "1111111", 2, null)));
+        panelHeight.Add((int)Mathf.Abs(offset - 10));
+
     }
 
     Block CreateBlock(Block block){
         // 決定父物件
         Transform parent = attackParent;
-        if(block.GetType() == typeof(AttackBlock)) parent = attackParent;
-        else if (block.GetType() == typeof(BuffBlock)) parent = buffParent;
-        // 生物件 暫存component
-        GameObject temp = (GameObject)GameObject.Instantiate(emptyBlock, parent, false);
-        BlockObj blockObj = temp.AddComponent<BlockObj>();
-        //初始設定
-        blockObj.block = block;
-        offset -= 10;
         float Y = 1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
-        temp.GetComponent<RectTransform>().sizeDelta = new Vector2(180, Y * block.cast);
-        temp.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(60,offset,0);
-        offset -= Y * block.cast;
 
-        temp.transform.GetChild(0).GetComponent<Image>().sprite = block.icon;
-        temp.name = block.name;
+        if (block.GetType() == typeof(AttackBlock)) parent = attackParent;
+        else if (block.GetType() == typeof(BuffBlock)) parent = buffParent;
+        else if (block.GetType() == typeof(IFBlock)) parent = IFParent;
+        else if (block.GetType() == typeof(MultipleBlock)) parent = multipleParent;
+        // 生物件 暫存component
+        //初始設定
+        offset -= 10;
+        Vector3 pos = new Vector3(60,offset,0);
+        GameManager.Inst.uiManager.showBlockUI(block, parent, pos);
+
+        offset -= Y * block.GetCast();
         return block;
     }
     public void setAllActive(bool set) {

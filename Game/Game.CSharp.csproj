@@ -65,17 +65,16 @@
   <ItemGroup>
     <Compile Include="Assets\Script\ATB\ATBTimer.cs" />
     <Compile Include="Assets\Script\ATB\ATBUI.cs" />
-    <Compile Include="Assets\Script\Block\AttackBlock.cs" />
     <Compile Include="Assets\Script\Block\Block.cs" />
     <Compile Include="Assets\Script\Block\BlockDataBase.cs" />
-    <Compile Include="Assets\Script\Block\BlockDecorator.cs" />
     <Compile Include="Assets\Script\Block\BlockObj.cs" />
-    <Compile Include="Assets\Script\Block\BuffBlock.cs" />
-    <Compile Include="Assets\Script\Buff\Buff.cs" />
+    <Compile Include="Assets\Script\Block\actionBlock\AttackBlock.cs" />
+    <Compile Include="Assets\Script\Block\actionBlock\BuffBlock.cs" />
+    <Compile Include="Assets\Script\Block\decoratorBlock\BlockDecorator.cs" />
+    <Compile Include="Assets\Script\Block\decoratorBlock\IFBlock.cs" />
+    <Compile Include="Assets\Script\Block\decoratorBlock\MultipleBlock.cs" />
     <Compile Include="Assets\Script\Character\Character.cs" />
     <Compile Include="Assets\Script\Character\CharacterManager.cs" />
-    <Compile Include="Assets\Script\Character\Monster.cs" />
-    <Compile Include="Assets\Script\Character\Player.cs" />
     <Compile Include="Assets\Script\GameManager.cs" />
     <Compile Include="Assets\Script\UIManager.cs" />
     <Compile Include="Assets\Script\UIRayCast.cs" />

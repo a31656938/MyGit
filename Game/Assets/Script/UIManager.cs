@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour {
     public GameObject gridPrefab;
     public Animator blocksAnimator;
 
+    public GameObject blockPrefab;
     public GameObject dragBlock;
 
     public GameObject description;
@@ -32,12 +33,36 @@ public class UIManager : MonoBehaviour {
 	public void MyUpdate () {
         atbUI.MyUpdate();
 	}
-    public void UpdateDragBlock(Block block) {
+    public void showBlockUI(Block block, Transform parent, Vector3 position)
+    {
+        showBlockUI(block, parent, position, 0);
+    }
+    public void showBlockUI(Block block,Transform parent,Vector3 position,int layer) { 
         float Y = 1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
 
+        GameObject temp = (GameObject)Instantiate(blockPrefab, parent, false);
+        temp.name = block.name;
+        temp.GetComponent<RectTransform>().anchoredPosition3D = position;
+        temp.GetComponent<RectTransform>().sizeDelta = new Vector2(180 - 20 * layer, Y * block.GetCast() - 0.2f * Y * layer);
+        temp.GetComponent<Image>().color = block.color;
+        temp.GetComponent<BlockObj>().block = block;
+
+        if (typeof(BlockDecorator).IsAssignableFrom(block.GetType())){
+            temp.transform.GetChild(0).gameObject.SetActive(false);
+            if(((BlockDecorator)block).inBlock != null){
+                float tempY = (-1 * ((BlockDecorator)block).GetLocalCast() - 0.1f) * Y; 
+                showBlockUI(((BlockDecorator)block).inBlock, temp.transform, new Vector3(10, tempY, 0), layer + 1); 
+            }  
+        }
+        else temp.transform.GetChild(0).GetComponent<Image>().sprite = block.icon;
+    }
+    public void UpdateDragBlock(Block block) {
+        foreach (Transform child in dragBlock.transform){
+            Destroy(child.gameObject);
+        } 
+
         dragBlock.GetComponent<RectTransform>().anchoredPosition3D = Input.mousePosition;
-        dragBlock.GetComponent<RectTransform>().sizeDelta = new Vector2(180, Y * block.cast);
-        dragBlock.transform.GetChild(0).GetComponent<Image>().sprite = block.icon;
+        showBlockUI(block, dragBlock.transform, Vector3.zero);
     }
     public void HideDescription() {
         descriptionTimer = 0;
@@ -72,6 +97,25 @@ public class UIManager : MonoBehaviour {
             RectTransform tempRectTransform = temp.GetComponent<RectTransform>();
             tempRectTransform.sizeDelta = new Vector2(5, 1020);
             tempRectTransform.anchoredPosition3D = new Vector3(offsetX * i, 0, 0);
+        }
+    }
+    public void UpdateMemory() {
+        foreach (Transform child in program) {
+            Destroy(child.gameObject);
+        }
+        float Y = 1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
+        float X = (640.0f / 3.0f);
+        float Xoffset = (X - 180.0f) / 2.0f;
+
+        for (int i = 0; i < GameManager.Inst.characterManager.characters.Count; i++) {
+            for (int j = 0; j < GameManager.Inst.characterManager.TotalMemory; j++) {
+                Block tempBlock = GameManager.Inst.characterManager.characters[i].process[j];
+                if (tempBlock.name != null){
+                    Vector3 pos = new Vector3(X * i + Xoffset, -1 * Y * j, 0);
+                    showBlockUI(tempBlock, program, pos);
+                    
+                }
+            }
         }
     }
 }

@@ -45,6 +45,11 @@ public class ATBCharacter {
         this.idleTime = idleTime;
         this.castTime = castTime;
     }
+    public void Set(float nowSpeed,float idleTime,float castTime) {
+        this.nowSpeed = nowSpeed;
+        this.idleTime = idleTime;
+        this.castTime = castTime;
+    }
     public void change() {
         if (this.IsIdle) this.nowTime = this.castTime;
         else this.nowTime = this.idleTime;
