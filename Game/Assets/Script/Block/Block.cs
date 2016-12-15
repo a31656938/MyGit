@@ -8,23 +8,15 @@ public class Block {
     public Sprite icon;
     public Color color;
     protected int cast;
-    private string name1;
-    private string description1;
-    private int cast1;
 
     public Block() { }
-    public Block(Block block) {
-        this.name = block.name;
-        this.description = block.description;
-        this.cast = block.cast;
-        icon = Resources.Load<Sprite>("BlockIcon/" + block.name);
-    }
-    public Block(string name, string description, int cast)
+    public void SetBase(string name, string description, int cast,Color color)
     {
         this.name = name;
         this.description = description;
         this.cast = cast;
         icon = Resources.Load<Sprite>("BlockIcon/" + name);
+        this.color = color;
     }
     public string GetDescription() {
         return description;

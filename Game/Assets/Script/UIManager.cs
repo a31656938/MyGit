@@ -8,22 +8,36 @@ public class UIManager : MonoBehaviour {
     public Text nowGroupName;
     public Text startButtonText;
     public Transform program;
-    public Transform girdParent;
-    public GameObject gridPrefab;
     public Animator blocksAnimator;
-
+    public float BlockY = 0;
+    public float BlockX = 0;
     public GameObject blockPrefab;
     public GameObject dragBlock;
+    public Block nowDragBlock;
 
     public GameObject description;
     public float descriptionTimer;
+
+    public Transform girdParent;
+    public GameObject gridPrefab;
+
+    public Transform statesParent;
+    public GameObject statesPrefab;
+    public List<GameObject> states;
+
+    public Transform timeLineParent;
+    public GameObject timeLine;
+
 	// Use this for initialization
 	public void Initial () {
         atbUI = this.GetComponent<ATBUI>();
         startButtonText.text = "出擊";
         dragBlock.SetActive(false);
         description.SetActive(false);
+        BlockY = 1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
+        BlockX = 640.0f / 3.0f; 
 
+        createStates();
         CreateGrid();   
 
         atbUI.Initial();
@@ -31,44 +45,66 @@ public class UIManager : MonoBehaviour {
 
 	// Update is called once per frame
 	public void MyUpdate () {
+        foreach (Transform child in timeLineParent){
+            Destroy(child.gameObject);
+        }
         atbUI.MyUpdate();
+
+
+        // timeLine
+        for (int i = 0; i < GameManager.Inst.characterManager.characters.Count - 1; i++) {
+            ATBCharacter c = GameManager.Inst.characterManager.characters[i].atb;
+            GameObject temp = (GameObject)Instantiate(timeLine, timeLineParent, false);
+            temp.GetComponent<Image>().color = GameManager.Inst.characterManager.characters[i].color;
+            if (c.IsIdle){
+                temp.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(BlockX * i, -60, 0);
+            }
+            else {                
+                float t = c.castTime - c.nowTime;
+                float y = -60 - t * BlockY;
+                temp.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(BlockX * i, y, 0);
+            }
+        }
+
 	}
+    public void resetGame() {
+        atbUI.MyUpdate();
+        UpdateStates();
+    }
     public void showBlockUI(Block block, Transform parent, Vector3 position)
     {
         showBlockUI(block, parent, position, 0);
     }
     public void showBlockUI(Block block,Transform parent,Vector3 position,int layer) { 
-        float Y = 1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
-
         GameObject temp = (GameObject)Instantiate(blockPrefab, parent, false);
         temp.name = block.name;
         temp.GetComponent<RectTransform>().anchoredPosition3D = position;
-        temp.GetComponent<RectTransform>().sizeDelta = new Vector2(180 - 20 * layer, Y * block.GetCast() - 0.2f * Y * layer);
+        temp.GetComponent<RectTransform>().sizeDelta = new Vector2(180 - 20 * layer, BlockY * block.GetCast() - 0.2f * BlockY * layer);
         temp.GetComponent<Image>().color = block.color;
         temp.GetComponent<BlockObj>().block = block;
 
         if (typeof(BlockDecorator).IsAssignableFrom(block.GetType())){
             temp.transform.GetChild(0).gameObject.SetActive(false);
+            temp.transform.GetChild(1).GetComponent<Text>().text = block.name;
+            temp.transform.GetChild(1).GetComponent<RectTransform>().sizeDelta = new Vector2(180 - 20 * layer, BlockY * ((BlockDecorator)block).GetLocalCast() - 0.2f * BlockY * layer);
+            // 判斷是否有合法inBlock
             if(((BlockDecorator)block).inBlock != null){
-                float tempY = (-1 * ((BlockDecorator)block).GetLocalCast() - 0.1f) * Y; 
-                showBlockUI(((BlockDecorator)block).inBlock, temp.transform, new Vector3(10, tempY, 0), layer + 1); 
+                if (((BlockDecorator)block).inBlock.name != null) {
+                    float tempY = (-1 * ((BlockDecorator)block).GetLocalCast() - 0.1f) * BlockY;
+                    showBlockUI(((BlockDecorator)block).inBlock, temp.transform, new Vector3(10, tempY, 0), layer + 1); 
+                }
             }  
         }
-        else temp.transform.GetChild(0).GetComponent<Image>().sprite = block.icon;
-    }
-    public void UpdateDragBlock(Block block) {
-        foreach (Transform child in dragBlock.transform){
-            Destroy(child.gameObject);
-        } 
-
-        dragBlock.GetComponent<RectTransform>().anchoredPosition3D = Input.mousePosition;
-        showBlockUI(block, dragBlock.transform, Vector3.zero);
+        else {
+            temp.transform.GetChild(0).GetComponent<Image>().sprite = block.icon;
+            temp.transform.GetChild(1).gameObject.SetActive(false);
+        }
     }
     public void HideDescription() {
         descriptionTimer = 0;
         description.SetActive(false);
     }
-    public void ChangeDescription(Block block) {
+    public void UpdateDescription(Block block) {
         descriptionTimer += Time.deltaTime;
         if (block.name != description.transform.GetChild(0).GetComponent<Text>().text) HideDescription();
         else if (description.GetComponent<RectTransform>().anchoredPosition3D != Input.mousePosition) HideDescription();
@@ -79,39 +115,89 @@ public class UIManager : MonoBehaviour {
         description.transform.GetChild(1).GetComponent<Text>().text = block.description;
         
     }
+    public void UpdateDragBlock(Block block)
+    {
+        foreach (Transform child in dragBlock.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        dragBlock.GetComponent<RectTransform>().anchoredPosition3D = Input.mousePosition;
+        showBlockUI(block, dragBlock.transform, Vector3.zero);
+    }
+    public void UpdateStates() {
+        for (int i = 0; i < GameManager.Inst.characterManager.characters.Count - 1; i++){
+            Character c = GameManager.Inst.characterManager.characters[i];
+            float t = (float)((float)c.nowHP / (float)c.maxHP);
+            states[i].transform.GetChild(1).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(170.0f * t, 30);
+        }
+    
+    }
+
+    public void BattleUI(float t)
+    {
+        t = Mathf.Clamp01(t);
+        
+        atbUI.BattleUI(t);
+        for (int i = 0; i < 3; i++) {
+            // 腳色位置
+            Transform temp = GameManager.Inst.characterManager.characterObjParent.GetChild(i).GetChild(0);
+            int index = -1;
+            switch (i) {
+                case 0: index = 1; break;
+                case 1: index = 0; break;
+                case 2: index = 2; break;
+            }
+            Vector3 dir = new Vector3(-1, (1 - index), 0).normalized;
+            temp.localPosition = dir * t;
+            // states
+            states[i].GetComponent<Image>().color = new Color(1, 1, 1, Mathf.Lerp(0, 0.5f, t));
+            states[i].transform.GetChild(0).GetComponent<Image>().color = new Color(1, 1, 1, t);
+            states[i].transform.GetChild(1).GetComponent<Image>().color = new Color(1, 0, 0, t);
+            states[i].transform.GetChild(1).GetChild(0).GetComponent<Image>().color = new Color(0, 1, 0, t);
+            states[i].transform.GetChild(2).GetComponent<Image>().color = new Color(1, 1, 1, Mathf.Lerp(0, 0.5f, t));
+        }
+    }
     void CreateGrid() {
         // grid row;
-        float offsetY = -1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
         for (int i = 1; i <= GameManager.Inst.characterManager.TotalMemory - 1; i++)
         {
             GameObject temp = (GameObject)Instantiate(gridPrefab, girdParent, false);
             RectTransform tempRectTransform = temp.GetComponent<RectTransform>();
             tempRectTransform.sizeDelta = new Vector2(640, 5);
-            tempRectTransform.anchoredPosition3D = new Vector3(0, offsetY * i, 0);
+            tempRectTransform.anchoredPosition3D = new Vector3(0, -1 * BlockY * i, 0);
         }
         // grid column
-        float offsetX = 640 / 3;
         for (int i = 1; i <= 2; i++)
         {
             GameObject temp = (GameObject)Instantiate(gridPrefab, girdParent, false);
             RectTransform tempRectTransform = temp.GetComponent<RectTransform>();
             tempRectTransform.sizeDelta = new Vector2(5, 1020);
-            tempRectTransform.anchoredPosition3D = new Vector3(offsetX * i, 0, 0);
+            tempRectTransform.anchoredPosition3D = new Vector3(BlockX * i, 0, 0);
+        }
+    }
+    void createStates() {
+        states = new List<GameObject>();
+
+        for (int i = 0; i < GameManager.Inst.characterManager.characters.Count - 1; i++){
+            Character c = GameManager.Inst.characterManager.characters[i];
+            GameObject temp = (GameObject)Instantiate(statesPrefab, statesParent.GetChild(i), false);
+            temp.transform.GetChild(0).GetComponent<Image>().sprite = c.atbIcon;
+            temp.transform.GetChild(1).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
+            states.Add(temp); 
         }
     }
     public void UpdateMemory() {
         foreach (Transform child in program) {
             Destroy(child.gameObject);
         }
-        float Y = 1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
-        float X = (640.0f / 3.0f);
-        float Xoffset = (X - 180.0f) / 2.0f;
+        float Xoffset = (BlockX - 180.0f) / 2.0f;
 
         for (int i = 0; i < GameManager.Inst.characterManager.characters.Count; i++) {
             for (int j = 0; j < GameManager.Inst.characterManager.TotalMemory; j++) {
                 Block tempBlock = GameManager.Inst.characterManager.characters[i].process[j];
                 if (tempBlock.name != null){
-                    Vector3 pos = new Vector3(X * i + Xoffset, -1 * Y * j, 0);
+                    Vector3 pos = new Vector3(BlockX * i + Xoffset, -1 * BlockY * j, 0);
                     showBlockUI(tempBlock, program, pos);
                     
                 }

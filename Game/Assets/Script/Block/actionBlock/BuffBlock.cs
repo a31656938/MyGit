@@ -6,9 +6,12 @@ public class BuffBlock : Block
 {
     public bool benefit;
 
-    public BuffBlock(string name, string description, int cast, bool benefit):base(name,description,cast)
-    {
+    public BuffBlock(BuffBlock block) {
+        SetBase(block.name, block.description, block.cast, new Color(0.2f, 1, 0.2f));
+        this.benefit = block.benefit;
+    }
+    public BuffBlock(string name, string description, int cast, bool benefit){
+        SetBase(name, description, cast, new Color(0.2f, 1, 0.2f));
         this.benefit = benefit;
-        this.color = new Color(0.2f, 1, 0.2f);
     }
 }

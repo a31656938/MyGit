@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class CharacterManager : MonoBehaviour {
-    private float normalSpeed = 0.8f;
+    public float normalSpeed = 1.0f;
     
     public int TotalMemory;
     public Transform characterObjParent;
@@ -21,27 +21,28 @@ public class CharacterManager : MonoBehaviour {
             character.characterObj = characterObj;
             characters.Add(character);
             characterObjs.Add(characterObj);
-
             for (int j = 0; j < TotalMemory; j++) character.process.Add(new Block()); 
         }
 
 	}
-    public void calculateTime() {
+    public void resetGame() {
         foreach (Character c in characters) {
-            int time = 0;
+            c.nowHP = c.maxHP;
+
+            int idle = 0;
+            int cast = 0;
             for (int i = 0; i < TotalMemory; i++){
                 Block exist = c.process[i];
                 if (exist.name != null){
-                    time += exist.GetCast();
+                    cast = i + exist.GetCast();
+                    idle += exist.GetCast();
                 }
             }
-            c.atb.Set(normalSpeed, time, time);
+            c.atb.Set(normalSpeed, idle, cast);
         }
-    
     }
-    // Update is called once per frame
-    public void MyUpdate()
-    {
 
+    // Update is called once per frame
+    public void MyUpdate(){
     }
 }

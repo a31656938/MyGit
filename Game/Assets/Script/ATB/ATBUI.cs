@@ -47,4 +47,12 @@ public class ATBUI : MonoBehaviour {
         }
         return t;
     }
+
+    public void BattleUI(float t){
+        bar.color = new Color(bar.color.r, bar.color.g, bar.color.b, t);
+        foreach (RectTransform icon in atbIcons) {
+            Color temp = icon.gameObject.GetComponent<Image>().color;
+            icon.gameObject.GetComponent<Image>().color = new Color(temp.r, temp.g, temp.b, t);
+        }
+    }
 }
