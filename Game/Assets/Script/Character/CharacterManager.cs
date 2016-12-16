@@ -44,5 +44,20 @@ public class CharacterManager : MonoBehaviour {
 
     // Update is called once per frame
     public void MyUpdate(){
+
+        for (int i = 0; i < characters.Count; i++) {
+            ATBCharacter atbC = characters[i].atb;
+            if (!atbC.IsIdle) {
+                int tempCast =  Mathf.FloorToInt(atbC.castTime - atbC.nowTime);
+                if (tempCast != atbC.nowCast) {
+                    if (characters[i].process[tempCast].name != null){
+                        Debug.Log(i + "  " + characters[i].process[tempCast].name); 
+                    }
+                }
+                atbC.nowCast = tempCast;
+            }
+        
+        }
+
     }
 }

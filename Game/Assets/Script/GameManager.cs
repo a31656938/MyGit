@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour {
                 foreach (Character c in characterManager.characters) {
                     c.atb.nowSpeed = characterManager.normalSpeed;
                 }
-                
+                // 加速 緩速
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if (Input.GetMouseButton(0)) {
@@ -78,7 +78,6 @@ public class GameManager : MonoBehaviour {
                         }
                     }
                 }  
-
 
                 characterManager.MyUpdate();
                 atbTimer.MyUpdate();

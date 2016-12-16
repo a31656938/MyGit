@@ -34,6 +34,7 @@ public class ATBTimer : MonoBehaviour {
 [System.Serializable]
 public class ATBCharacter {
     public bool IsIdle;
+    public int nowCast;
 
     public float idleTime;
     public float castTime;
@@ -54,6 +55,7 @@ public class ATBCharacter {
         if (this.IsIdle) this.nowTime = this.castTime;
         else this.nowTime = this.idleTime;
 
+        nowCast = -1;
         this.IsIdle = !this.IsIdle;
     }
 }
