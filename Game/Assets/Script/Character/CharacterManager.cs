@@ -10,6 +10,9 @@ public class CharacterManager : MonoBehaviour {
     public Transform characterObjParent;
     public List<Character> characters;
     public List<GameObject> characterObjs;
+
+    public States player;
+    public States monster;
 	// Use this for initialization
 	public void Initial () {
         characters = new List<Character>();
@@ -26,12 +29,13 @@ public class CharacterManager : MonoBehaviour {
 
 	}
     public void resetGame() {
-        foreach (Character c in characters) {
-            c.nowHP = c.maxHP;
+        player.nowHP = player.maxHP;
+        monster.nowHP = monster.maxHP;
 
+        foreach (Character c in characters) {
             int idle = 0;
             int cast = 0;
-            for (int i = 0; i < TotalMemory; i++){
+            for (int i = 0; i < c.process.Count; i++){
                 Block exist = c.process[i];
                 if (exist.name != null){
                     cast = i + exist.GetCast();
@@ -44,20 +48,54 @@ public class CharacterManager : MonoBehaviour {
 
     // Update is called once per frame
     public void MyUpdate(){
-
         for (int i = 0; i < characters.Count; i++) {
             ATBCharacter atbC = characters[i].atb;
             if (!atbC.IsIdle) {
                 int tempCast =  Mathf.FloorToInt(atbC.castTime - atbC.nowTime);
                 if (tempCast != atbC.nowCast) {
                     if (characters[i].process[tempCast].name != null){
-                        Debug.Log(i + "  " + characters[i].process[tempCast].name); 
+                        UseSkill(i, characters[i].process[tempCast]);
                     }
                 }
                 atbC.nowCast = tempCast;
             }
-        
         }
 
+        if (player.nowHP <= 0) { 
+            ///game over
+        }
+        else if (monster.nowHP <= 0) {
+            ///game over
+        }
+    }
+    void UseSkill(int characterIndex, Block block) {
+        if (characterIndex < 3){
+            if (block.GetType() == typeof(AttackBlock)) {
+                monster.nowHP -= ((AttackBlock)block).attack;
+                characterObjs[3].GetComponent<Animator>().SetTrigger("hit");
+            }
+            else if (block.GetType() == typeof(BuffBlock)) { }
+            else if (block.GetType() == typeof(IFBlock)) { }
+            else if (block.GetType() == typeof(MultipleBlock)) { }
+
+
+
+        }
+        else {
+            if (block.GetType() == typeof(AttackBlock))
+            {
+                player.nowHP -= ((AttackBlock)block).attack;
+
+                for (int i = 0; i < 3; i++) {
+                    characterObjs[i].GetComponent<Animator>().SetTrigger("hit");
+                }
+
+            }
+            else if (block.GetType() == typeof(BuffBlock)) { }
+            else if (block.GetType() == typeof(IFBlock)) { }
+            else if (block.GetType() == typeof(MultipleBlock)) { }
+
+            GameManager.Inst.uiManager.UpdateStates();
+        }
     }
 }

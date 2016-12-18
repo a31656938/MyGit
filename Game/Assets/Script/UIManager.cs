@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour {
     public float BlockY = 0;
     public float BlockX = 0;
     public GameObject blockPrefab;
+
     public GameObject dragBlock;
     public Block nowDragBlock;
 
@@ -21,9 +22,7 @@ public class UIManager : MonoBehaviour {
     public Transform girdParent;
     public GameObject gridPrefab;
 
-    public Transform statesParent;
-    public GameObject statesPrefab;
-    public List<GameObject> states;
+    public GameObject playerStates;
 
     public Transform timeLineParent;
     public GameObject timeLine;
@@ -37,7 +36,6 @@ public class UIManager : MonoBehaviour {
         BlockY = 1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
         BlockX = 640.0f / 3.0f; 
 
-        createStates();
         CreateGrid();   
 
         atbUI.Initial();
@@ -126,12 +124,8 @@ public class UIManager : MonoBehaviour {
         showBlockUI(block, dragBlock.transform, Vector3.zero);
     }
     public void UpdateStates() {
-        for (int i = 0; i < GameManager.Inst.characterManager.characters.Count - 1; i++){
-            Character c = GameManager.Inst.characterManager.characters[i];
-            float t = (float)((float)c.nowHP / (float)c.maxHP);
-            states[i].transform.GetChild(1).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(170.0f * t, 30);
-        }
-    
+        float t = (float)((float)GameManager.Inst.characterManager.player.nowHP / (float)GameManager.Inst.characterManager.player.maxHP);
+        playerStates.transform.GetChild(0).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(450.0f * t, 30);       
     }
 
     public void BattleUI(float t)
@@ -150,13 +144,13 @@ public class UIManager : MonoBehaviour {
             }
             Vector3 dir = new Vector3(-1, (1 - index), 0).normalized;
             temp.localPosition = dir * t;
-            // states
-            states[i].GetComponent<Image>().color = new Color(1, 1, 1, Mathf.Lerp(0, 0.5f, t));
-            states[i].transform.GetChild(0).GetComponent<Image>().color = new Color(1, 1, 1, t);
-            states[i].transform.GetChild(1).GetComponent<Image>().color = new Color(1, 0, 0, t);
-            states[i].transform.GetChild(1).GetChild(0).GetComponent<Image>().color = new Color(0, 1, 0, t);
-            states[i].transform.GetChild(2).GetComponent<Image>().color = new Color(1, 1, 1, Mathf.Lerp(0, 0.5f, t));
+           
         }
+        // states
+        playerStates.GetComponent<Image>().color = new Color(1, 1, 1, Mathf.Lerp(0, 0.5f, t));
+        playerStates.transform.GetChild(0).GetComponent<Image>().color = new Color(1, 0, 0, t);
+        playerStates.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(0, 1, 0, t);
+        playerStates.transform.GetChild(1).GetComponent<Image>().color = new Color(1, 1, 1, Mathf.Lerp(0, 0.5f, t));
     }
     void CreateGrid() {
         // grid row;
@@ -176,24 +170,13 @@ public class UIManager : MonoBehaviour {
             tempRectTransform.anchoredPosition3D = new Vector3(BlockX * i, 0, 0);
         }
     }
-    void createStates() {
-        states = new List<GameObject>();
-
-        for (int i = 0; i < GameManager.Inst.characterManager.characters.Count - 1; i++){
-            Character c = GameManager.Inst.characterManager.characters[i];
-            GameObject temp = (GameObject)Instantiate(statesPrefab, statesParent.GetChild(i), false);
-            temp.transform.GetChild(0).GetComponent<Image>().sprite = c.atbIcon;
-            temp.transform.GetChild(1).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
-            states.Add(temp); 
-        }
-    }
     public void UpdateMemory() {
         foreach (Transform child in program) {
             Destroy(child.gameObject);
         }
         float Xoffset = (BlockX - 180.0f) / 2.0f;
 
-        for (int i = 0; i < GameManager.Inst.characterManager.characters.Count; i++) {
+        for (int i = 0; i < GameManager.Inst.characterManager.characters.Count - 1; i++) {
             for (int j = 0; j < GameManager.Inst.characterManager.TotalMemory; j++) {
                 Block tempBlock = GameManager.Inst.characterManager.characters[i].process[j];
                 if (tempBlock.name != null){

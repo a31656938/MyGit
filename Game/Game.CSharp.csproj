@@ -18,7 +18,6 @@
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.4.1f1</UnityVersion>
     <RootNamespace></RootNamespace>
-    <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,25 +60,8 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="PKFx-Runtime">
-      <HintPath>Assets\AssetStore\PopcornFX\PopcornFX\Scripts\PKFx-Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="PKFx-Helper">
-      <HintPath>Assets\AssetStore\PopcornFX\PopcornFX\Scripts\PKFx-Helper.dll</HintPath>
-    </Reference>
-    <Reference Include="PKFxManager">
-      <HintPath>Assets\AssetStore\PopcornFX\PopcornFX\Scripts\PKFxManager.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\AssetStore\PopcornFX\DiscoveryPack_Demo\_Sources\Scripts\AddPKFxFXComponent.cs" />
-    <Compile Include="Assets\AssetStore\PopcornFX\DiscoveryPack_Demo\_Sources\Scripts\BounceDie.cs" />
-    <Compile Include="Assets\AssetStore\PopcornFX\DiscoveryPack_Demo\_Sources\Scripts\CamZoom.cs" />
-    <Compile Include="Assets\AssetStore\PopcornFX\DiscoveryPack_Demo\_Sources\Scripts\FPSCam.cs" />
-    <Compile Include="Assets\AssetStore\PopcornFX\DiscoveryPack_Demo\_Sources\Scripts\PointClickSpawn.cs" />
-    <Compile Include="Assets\AssetStore\PopcornFX\DiscoveryPack_Demo\_Sources\Scripts\RomanCandle.cs" />
-    <Compile Include="Assets\AssetStore\PopcornFX\DiscoveryPack_Demo\_Sources\Scripts\RootyTootyPointNShooty.cs" />
-    <Compile Include="Assets\AssetStore\PopcornFX\DiscoveryPack_Demo\_Sources\Scripts\TimedSuicide.cs" />
     <Compile Include="Assets\Script\ATB\ATBTimer.cs" />
     <Compile Include="Assets\Script\ATB\ATBUI.cs" />
     <Compile Include="Assets\Script\Block\Block.cs" />
@@ -92,18 +74,14 @@
     <Compile Include="Assets\Script\Block\decoratorBlock\MultipleBlock.cs" />
     <Compile Include="Assets\Script\Character\Character.cs" />
     <Compile Include="Assets\Script\Character\CharacterManager.cs" />
+    <Compile Include="Assets\Script\Character\stageMonster.cs" />
     <Compile Include="Assets\Script\GameManager.cs" />
+    <Compile Include="Assets\Script\States.cs" />
     <Compile Include="Assets\Script\UIManager.cs" />
     <Compile Include="Assets\Script\UIRayCast.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AssetStore\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
-    <None Include="Assets\AssetStore\PopcornFX\DiscoveryPack_Demo\_README_FIRST.txt" />
-    <None Include="Assets\AssetStore\PopcornFX\PopcornFX\README.txt" />
-    <None Include="Assets\AssetStore\PopcornFX\PopcornFX\Resources\PKFxDepthCopyToColor.shader" />
-    <None Include="Assets\AssetStore\PopcornFX\PopcornFX\Resources\PKFxDistQuickDirtyBlurEffect.shader" />
-    <None Include="Assets\AssetStore\PopcornFX\PopcornFX\Resources\PKFxDistortionEffect.shader" />
-    <None Include="Assets\AssetStore\PopcornFX\PopcornFX\Resources\PkFxDepthCopy.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
 </Project>

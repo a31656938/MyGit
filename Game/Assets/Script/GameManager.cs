@@ -244,6 +244,7 @@ public class GameManager : MonoBehaviour {
         if (0 < startDelay && startDelay < 3) return;
         start = !start;
         if (start){
+            characterManager.characters[3].process = stageMonster.getProcess(0);
             characterManager.resetGame();
             atbTimer.ReStart();
             uiManager.resetGame();
