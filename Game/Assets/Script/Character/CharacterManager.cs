@@ -13,7 +13,8 @@ public class CharacterManager : MonoBehaviour {
 
     public States player;
     public States monster;
-	// Use this for initialization
+    public float buffTimer;
+    // Use this for initialization
 	public void Initial () {
         characters = new List<Character>();
 
@@ -31,7 +32,7 @@ public class CharacterManager : MonoBehaviour {
     public void resetGame() {
         player.nowHP = player.maxHP;
         monster.nowHP = monster.maxHP;
-
+        buffTimer = 0;
         foreach (Character c in characters) {
             int idle = 0;
             int cast = 0;
@@ -60,6 +61,28 @@ public class CharacterManager : MonoBehaviour {
                 atbC.nowCast = tempCast;
             }
         }
+        
+        // buff 減少
+        buffTimer += Time.deltaTime;
+        if (buffTimer >= 1.0f) {
+            for (int i = player.buffs.Count - 1; i >= 0; i--) {
+                UseBuff(0,player.buffs[i]);
+                player.buffs[i].time -= 1;
+                if (player.buffs[i].time == 0) {
+                    player.buffs.RemoveAt(i);
+                }
+            }
+            for (int i = monster.buffs.Count - 1; i >= 0; i--){
+                UseBuff(1, monster.buffs[i]);
+                monster.buffs[i].time -= 1;
+                if (monster.buffs[i].time == 0){
+                    monster.buffs.RemoveAt(i);
+                }
+            }
+
+            buffTimer = 0;
+        }
+
 
         if (player.nowHP <= 0) { 
             ///game over
@@ -67,6 +90,15 @@ public class CharacterManager : MonoBehaviour {
         else if (monster.nowHP <= 0) {
             ///game over
         }
+    }
+    void UseBuff(int characterIndex, Buff buff){
+        if (characterIndex == 0){
+            Debug.Log(buff.name);
+        }
+        else {
+            Debug.Log(buff.name);
+        }
+    
     }
     void UseSkill(int characterIndex, Block block) {
         if (characterIndex < 3){
@@ -78,8 +110,7 @@ public class CharacterManager : MonoBehaviour {
             else if (block.GetType() == typeof(IFBlock)) { }
             else if (block.GetType() == typeof(MultipleBlock)) { }
 
-
-
+            if (block.buff != null) monster.buffs.Add(block.buff);
         }
         else {
             if (block.GetType() == typeof(AttackBlock))

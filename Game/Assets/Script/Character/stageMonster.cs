@@ -8,7 +8,7 @@ public class stageMonster  {
         List<Block> re = new List<Block>();
 
         if (level == 0){
-            re.Add(new AttackBlock("block00", "", 2, 20));
+            re.Add(new AttackBlock("block00", "", 2, null, 20));
             re.Add(new Block());
 
         }

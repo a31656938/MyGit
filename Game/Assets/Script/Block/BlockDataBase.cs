@@ -20,20 +20,28 @@ public class BlockDataBase : MonoBehaviour{
     float offset = 0;
 	// Use this for initialization
 	public void Initial () {
+        Buff tempBuff;
+
         panelHeight = new List<int>();
         offset = 0;
         attackBlockGroup = new List<AttackBlock>();
-        attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("Oil", "被油瓶砸到還是會痛的，身體還會油油的", 2, 5)));
-        attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("FireBall", "隨處可見的火球術", 3, 20)));
-        attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("WaterGun", "強勁的噴射水槍攻擊", 4, 30)));
-        attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("WindSword", "徐徐吹來的風刃", 4, 10)));
+        tempBuff = new Buff("oiled", "油油的", 3);
+        attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("Oil", "被油瓶砸到還是會痛的，身體還會油油的", 2, tempBuff, 5)));
+        tempBuff = new Buff("fired", "燃燒吧", 3);
+        attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("FireBall", "隨處可見的火球術", 3, tempBuff, 20)));
+        tempBuff = new Buff("wet", "潮", 3);
+        attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("WaterGun", "強勁的噴射水槍攻擊", 4, tempBuff, 30)));
+        attackBlockGroup.Add((AttackBlock)CreateBlock(new AttackBlock("WindSword", "徐徐吹來的風刃", 4, null, 10)));
         panelHeight.Add((int)Mathf.Abs(offset - 10));
 
         offset = 0;
         buffBlockGroup = new List<BuffBlock>();
-        buffBlockGroup.Add((BuffBlock)CreateBlock(new BuffBlock("PowerUp", "感覺全身充滿了力氣", 3, true)));
-        buffBlockGroup.Add((BuffBlock)CreateBlock(new BuffBlock("PowerDown", "感覺全身一點力氣也沒有", 4, false)));
-        buffBlockGroup.Add((BuffBlock)CreateBlock(new BuffBlock("SpeedUp", "獲得風馳電掣般的速度", 3, true)));
+        tempBuff = new Buff("powerUp", "力量加倍", 10);
+        buffBlockGroup.Add((BuffBlock)CreateBlock(new BuffBlock("PowerUp", "感覺全身充滿了力氣", 3, tempBuff, true)));
+        tempBuff = new Buff("powerDown", "力量減半", 10);
+        buffBlockGroup.Add((BuffBlock)CreateBlock(new BuffBlock("PowerDown", "感覺全身一點力氣也沒有", 4, tempBuff, false)));
+        tempBuff = new Buff("speedUp", "速度加倍", 10);
+        buffBlockGroup.Add((BuffBlock)CreateBlock(new BuffBlock("SpeedUp", "獲得風馳電掣般的速度", 3, tempBuff, true)));
         panelHeight.Add((int)Mathf.Abs(offset - 10));
 
         offset = 0;

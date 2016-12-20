@@ -11,7 +11,7 @@ public class BlockDecorator : Block {
     }
 
     public void SetBase(string name, string description, int cast,Color color,Block inBlock) {
-        SetBase(name, description, cast, color);
+        base.SetBase(name, description, cast, color,null);
         this.inBlock = inBlock;
     }
     public void SetIn(Block block) {
