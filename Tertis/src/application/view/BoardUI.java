@@ -33,11 +33,15 @@ public class BoardUI extends MyObserver{
 		}
 		
 		gamePanel.addEventHandler(KeyEvent.KEY_PRESSED,  (key) -> {
+			if(!Input.key(key.getCode())){
+				Input.setOneKey(key.getCode(), true);
+			}
 			Input.setKey(key.getCode(), true);
 		});
 		
 		gamePanel.addEventHandler(KeyEvent.KEY_RELEASED, (key) -> {
 			Input.setKey(key.getCode(), false);
+			Input.setOneKey(key.getCode(), false);
 		});
 	}
 	

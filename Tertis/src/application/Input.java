@@ -4,6 +4,7 @@ import javafx.scene.input.KeyCode;
 
 public class Input {
 	private static boolean[] keyStates = new boolean[1000] ;
+	private static boolean[] oneKeyStates = new boolean[1000];
 	
 	public static boolean key(KeyCode keyCode){
 		int ikey = toIKey(keyCode);
@@ -13,6 +14,20 @@ public class Input {
 	public static  void setKey(KeyCode keyCode, boolean state){
 		int ikey = toIKey(keyCode);
 		keyStates[ikey] = state;
+	}
+	
+	public static boolean oneKey(KeyCode keyCode){
+		int ikey = toIKey(keyCode);
+		if(oneKeyStates[ikey]){
+			oneKeyStates[ikey] = false;
+			return true;
+		}
+		return false;
+	}
+	
+	public static void setOneKey(KeyCode keyCode, boolean state){
+		int ikey = toIKey(keyCode);
+		oneKeyStates[ikey] = state;
 	}
 	
 	public  static int toIKey(KeyCode keyCode){

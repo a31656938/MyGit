@@ -2,5 +2,5 @@ package Block;
 import application.pair;
 
 public interface blockInterface {
-	public pair[] rotate(int side);
+	public void rotate(int side,int[][] board);
 }

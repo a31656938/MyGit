@@ -17,6 +17,7 @@ import javafx.util.Duration;
 
 public class GameController  {
 	public boolean stop;
+	public boolean gameOver;
 	public float boardTimer;
 	public float keyTimer;
 	
@@ -27,6 +28,7 @@ public class GameController  {
 	private NextBlock nextBlock;
 	private Score score;
 	private Timeline timeLine;
+	private boolean quickDown;
 	
 	@FXML
 	private BorderPane pane;
@@ -89,7 +91,8 @@ public class GameController  {
 		boardTimer = 0;
 		keyTimer = 0;
 		stop = false;
-		
+		quickDown = false;
+		gameOver = false;
 		int[][] temp ;
 		temp = new int[Board.WIDTH][Board.HEIGHT];
 		
@@ -103,13 +106,14 @@ public class GameController  {
 		nextBlock.SetData(randomNext());	// next
 		score.SetData(0);		// zero score	
 	}
-	
+
 	private void mainLoop(){
 		// IF stop 
-		if(stop) return;
+		if(stop || gameOver) return;
 		// 
 		updateBoard();
 		
+		gameOver = checkGameOver();
 	}
 	Block randomNext(){
 		Random ran = new Random();
@@ -132,6 +136,7 @@ public class GameController  {
 				if(board.boards[j][i] == 0) check = false;
 			}
 			if(check){
+				score.SetData((int)score.GetData() + 100);
 				// down one step
 				for(int k= i;k>=1;k--){
 					for(int j=0;j<Board.WIDTH;j++){
@@ -154,12 +159,27 @@ public class GameController  {
 			if(Input.key(KeyCode.LEFT)) board.nowBlock.moveLeft(board.boards);
 			else if(Input.key(KeyCode.RIGHT)) board.nowBlock.moveRight(board.boards);
 			else if(Input.key(KeyCode.DOWN)) board.nowBlock.moveDown(board.boards);
+			else if(Input.oneKey(KeyCode.Z)) board.nowBlock.rotate(-1,board.boards);
+			else if(Input.oneKey(KeyCode.X)) board.nowBlock.rotate(1,board.boards);
+			else if(Input.oneKey(KeyCode.SPACE)){
+				quickDown = true;
+			}
 			keyTimer = 0;
 		}
 		
-		if(boardTimer >= 1){
+		if(quickDown && boardTimer >= 0.02f){
+			if( !board.nowBlock.moveDown(board.boards)){
+				quickDown = false;
+				board.SetData(board.GetData());
+				checkDelete();
+				board.SetData(board.boards);
+				board.nowBlock = null;
+			}
+			boardTimer = 0;
+		}else if (boardTimer >= 1){
 			
 			if( !board.nowBlock.moveDown(board.boards)){
+				quickDown = false;
 				board.SetData(board.GetData());
 				checkDelete();
 				board.SetData(board.boards);
@@ -171,6 +191,15 @@ public class GameController  {
 		
 		keyTimer += 0.01;
 		boardTimer += 0.01;
+	}
+	boolean checkGameOver(){
+		int[][] temp = board.boards;
+		for(int i=0;i<Board.WIDTH;i++){
+			if(temp[i][1] != 0){
+				return true;
+			}
+		}
+		return false;
 	}
 }
 

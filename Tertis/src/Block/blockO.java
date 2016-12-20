@@ -15,8 +15,8 @@ public class blockO extends Block{
 		color = 1;
 	}
 	@Override
-	public pair[] rotate(int side) {
-		return this.matrix;
+	public void rotate(int side,int[][] board) {
+		//no rotate
 	}
 	
 }

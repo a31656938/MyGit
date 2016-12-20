@@ -1,19 +1,19 @@
-﻿已經開始建置於 2016/12/18 下午 09:04:43。
-     1>節點 2 (Build 目標) 上的專案 "D:\MyGit\hungry snake\Project1\Project1\Project1.vcxproj"。
+﻿已經開始建置於 2016/12/20 下午 04:47:29。
+     1>節點 2 (Build 目標) 上的專案 "C:\Users\Jimmy\Desktop\MyGit\hungry snake\Project1\Project1\Project1.vcxproj"。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>d:\mygit\hungry snake\project1\project1\main.cpp(7): warning C4067: 未預期的語彙基元，接著前置處理器指示詞 - 必須是新行
-     1>d:\mygit\hungry snake\project1\project1\main.cpp(74): warning C4018: '<' : signed/unsigned 不相符
-     1>d:\mygit\hungry snake\project1\project1\main.cpp(78): warning C4018: '<' : signed/unsigned 不相符
-     1>d:\mygit\hungry snake\project1\project1\main.cpp(116): warning C4018: '<' : signed/unsigned 不相符
-     1>d:\mygit\hungry snake\project1\project1\main.cpp(119): warning C4018: '<' : signed/unsigned 不相符
-     1>d:\mygit\hungry snake\project1\project1\main.cpp(187): warning C4244: '=' : 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+     1>c:\users\jimmy\desktop\mygit\hungry snake\project1\project1\main.cpp(8): warning C4067: 未預期的語彙基元，接著前置處理器指示詞 - 必須是新行
+     1>c:\users\jimmy\desktop\mygit\hungry snake\project1\project1\main.cpp(75): warning C4018: '<' : signed/unsigned 不相符
+     1>c:\users\jimmy\desktop\mygit\hungry snake\project1\project1\main.cpp(79): warning C4018: '<' : signed/unsigned 不相符
+     1>c:\users\jimmy\desktop\mygit\hungry snake\project1\project1\main.cpp(120): warning C4018: '<' : signed/unsigned 不相符
+     1>c:\users\jimmy\desktop\mygit\hungry snake\project1\project1\main.cpp(123): warning C4018: '<' : signed/unsigned 不相符
+     1>c:\users\jimmy\desktop\mygit\hungry snake\project1\project1\main.cpp(191): warning C4244: '=' : 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\MyGit\hungry snake\Project1\Debug\Project1.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\MyGit\hungry snake\Project1\Debug\Project1.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\MyGit\hungry snake\Project1\Debug\Project1.lib" /MACHINE:X86 Debug\main.obj
-         Project1.vcxproj -> D:\MyGit\hungry snake\Project1\Debug\Project1.exe
-     1>專案 "D:\MyGit\hungry snake\Project1\Project1\Project1.vcxproj" (Build 目標) 建置完成。
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jimmy\Desktop\MyGit\hungry snake\Project1\Debug\Project1.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Jimmy\Desktop\MyGit\hungry snake\Project1\Debug\Project1.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jimmy\Desktop\MyGit\hungry snake\Project1\Debug\Project1.lib" /MACHINE:X86 Debug\main.obj
+         Project1.vcxproj -> C:\Users\Jimmy\Desktop\MyGit\hungry snake\Project1\Debug\Project1.exe
+     1>專案 "C:\Users\Jimmy\Desktop\MyGit\hungry snake\Project1\Project1\Project1.vcxproj" (Build 目標) 建置完成。
 
 建置成功。
 
-經過時間 00:00:00.69
+經過時間 00:00:02.14

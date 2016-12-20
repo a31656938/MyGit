@@ -5,16 +5,16 @@ import application.model.Board;
 
 public abstract class Block implements blockInterface{
 	protected pair[] matrix;
+	public int nowState;
 	public int color;
+	
 	
 	public pair[] GetMatrix(){
 		return matrix;
 	}
 	public boolean checkCollision(int[][] board, pair[] set){
 		boolean check = true;
-		
-		
-		
+			
 		for(int i=0;i<set.length;i++){
 			if(set[i].x < 0 || set[i].x >= Board.WIDTH)check = false;
 			else if(set[i].y < 0 || set[i].y >= Board.HEIGHT)check = false;

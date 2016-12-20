@@ -3,7 +3,8 @@
 #include<vector>
 #include<thread>
 #include<iostream>
-#include <windows.h>
+#include<windows.h>
+#include<cstdio>
 #include"conio.h""
 #include"time.h"  
 
@@ -81,6 +82,9 @@ void drawMap(){
 
 			
 			system("cls");
+
+			 printf("%c[%dmHELLO!\n", 0x1B, 32);
+
 			for (int i = 0; i < HEIGHT; i++){
 				for (int j = 0; j < LENGTH; j++){
 					switch (map[j][i]){
