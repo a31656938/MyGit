@@ -12,20 +12,25 @@ public class UIManager : MonoBehaviour {
     public float BlockY = 0;
     public float BlockX = 0;
     public GameObject blockPrefab;
-
+    // 拖曳方塊
     public GameObject dragBlock;
     public Block nowDragBlock;
-
+    // 描述
     public GameObject description;
-    public float descriptionTimer;
-
+    float descriptionTimer;
+    // 排版線
     public Transform girdParent;
     public GameObject gridPrefab;
-
+    // 腳色狀態
     public GameObject playerStates;
-
+    public GameObject monsterBuffs;
+    public GameObject buffPrefab;
+    // 時間縣
     public Transform timeLineParent;
-    public GameObject timeLine;
+    public GameObject timeLinePrefab;
+    // hit effect
+    public Transform hitEffectParent;
+    public List<Animator> animators;
 
 	// Use this for initialization
 	public void Initial () {
@@ -34,7 +39,12 @@ public class UIManager : MonoBehaviour {
         dragBlock.SetActive(false);
         description.SetActive(false);
         BlockY = 1020.0f / (float)GameManager.Inst.characterManager.TotalMemory;
-        BlockX = 640.0f / 3.0f; 
+        BlockX = 640.0f / 3.0f;
+
+        animators = new List<Animator>();
+        foreach (Transform child in hitEffectParent) {
+            animators.Add(child.GetComponent<Animator>());
+        }
 
         CreateGrid();   
 
@@ -52,7 +62,7 @@ public class UIManager : MonoBehaviour {
         // timeLine
         for (int i = 0; i < GameManager.Inst.characterManager.characters.Count - 1; i++) {
             ATBCharacter c = GameManager.Inst.characterManager.characters[i].atb;
-            GameObject temp = (GameObject)Instantiate(timeLine, timeLineParent, false);
+            GameObject temp = (GameObject)Instantiate(timeLinePrefab, timeLineParent, false);
             temp.GetComponent<Image>().color = GameManager.Inst.characterManager.characters[i].color;
             if (c.IsIdle){
                 temp.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(BlockX * i, -60, 0);
@@ -124,10 +134,39 @@ public class UIManager : MonoBehaviour {
         showBlockUI(block, dragBlock.transform, Vector3.zero);
     }
     public void UpdateStates() {
-        float t = (float)((float)GameManager.Inst.characterManager.player.nowHP / (float)GameManager.Inst.characterManager.player.maxHP);
-        playerStates.transform.GetChild(0).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(450.0f * t, 30);       
+        float t = (float)((float)GameManager.Inst.characterManager.states[0].nowHP / (float)GameManager.Inst.characterManager.states[0].maxHP);
+        playerStates.transform.GetChild(0).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(450.0f * t, 30);
+
+        // update Buffs
+        foreach (Transform child in monsterBuffs.transform){
+            Destroy(child.gameObject);
+        }
+        foreach (Transform child in playerStates.transform.GetChild(1)) {
+            Destroy(child.gameObject);
+        }
+
+        for (int i = 0; i <= 1; i++){
+            float x = 10;
+            Transform parent;
+            if (i == 0) parent = playerStates.transform.GetChild(1);
+            else parent = monsterBuffs.transform;
+
+            foreach (Buff buff in GameManager.Inst.characterManager.states[i].buffs){
+                GameObject temp = (GameObject)Instantiate(buffPrefab, parent, false);
+                temp.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(x, 0, 0);
+                temp.GetComponent<Image>().sprite = buff.icon;
+                x += 70;
+            }
+        }
+
+
     }
 
+
+    public void HitEffect(int characterIndex, string name) {
+        GameManager.Inst.characterManager.characterObjs[characterIndex].transform.GetChild(1).GetComponent<Animator>().SetTrigger("hit");
+        animators[characterIndex].SetTrigger(name);
+    }
     public void BattleUI(float t)
     {
         t = Mathf.Clamp01(t);
@@ -136,14 +175,14 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < 3; i++) {
             // 腳色位置
             Transform temp = GameManager.Inst.characterManager.characterObjParent.GetChild(i).GetChild(0);
-            int index = -1;
+            float y = 0;
             switch (i) {
-                case 0: index = 1; break;
-                case 1: index = 0; break;
-                case 2: index = 2; break;
+                case 0: y = 0; break;
+                case 1: y = 0.6f; break;
+                case 2: y = -0.6f; break;
             }
-            Vector3 dir = new Vector3(-1, (1 - index), 0).normalized;
-            temp.localPosition = dir * t;
+            Vector3 dir = new Vector3(-1, y, 0).normalized;
+            temp.localPosition = dir * t * 2f; 
            
         }
         // states
@@ -151,6 +190,7 @@ public class UIManager : MonoBehaviour {
         playerStates.transform.GetChild(0).GetComponent<Image>().color = new Color(1, 0, 0, t);
         playerStates.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(0, 1, 0, t);
         playerStates.transform.GetChild(1).GetComponent<Image>().color = new Color(1, 1, 1, Mathf.Lerp(0, 0.5f, t));
+        monsterBuffs.GetComponent<Image>().color = new Color(1, 1, 1, Mathf.Lerp(0, 0.5f, t)); ;
     }
     void CreateGrid() {
         // grid row;

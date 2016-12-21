@@ -11,9 +11,7 @@ public class CharacterManager : MonoBehaviour {
     public List<Character> characters;
     public List<GameObject> characterObjs;
 
-    public States player;
-    public States monster;
-    public float buffTimer;
+    public List<States> states;
     // Use this for initialization
 	public void Initial () {
         characters = new List<Character>();
@@ -30,9 +28,10 @@ public class CharacterManager : MonoBehaviour {
 
 	}
     public void resetGame() {
-        player.nowHP = player.maxHP;
-        monster.nowHP = monster.maxHP;
-        buffTimer = 0;
+        states[0].nowHP = states[0].maxHP;
+        states[1].nowHP = states[1].maxHP;
+        states[0].buffs.Clear();
+        states[1].buffs.Clear();
         foreach (Character c in characters) {
             int idle = 0;
             int cast = 0;
@@ -63,70 +62,146 @@ public class CharacterManager : MonoBehaviour {
         }
         
         // buff 減少
-        buffTimer += Time.deltaTime;
-        if (buffTimer >= 1.0f) {
-            for (int i = player.buffs.Count - 1; i >= 0; i--) {
-                UseBuff(0,player.buffs[i]);
-                player.buffs[i].time -= 1;
-                if (player.buffs[i].time == 0) {
-                    player.buffs.RemoveAt(i);
+        for (int j = 0; j <= 1; j++) {
+            for (int i = states[j].buffs.Count - 1; i >= 0; i--){
+                states[j].buffs[i].timer += Time.deltaTime;
+                if (states[j].buffs[i].timer >= 1){
+                    UseBuff(j, states[j].buffs[i]);
+                    states[j].buffs[i].count--;
+                    states[j].buffs[i].timer = 0;
+                    if (states[j].buffs[i].count <= 0) {
+                        states[j].buffs.RemoveAt(i);
+                    }
                 }
             }
-            for (int i = monster.buffs.Count - 1; i >= 0; i--){
-                UseBuff(1, monster.buffs[i]);
-                monster.buffs[i].time -= 1;
-                if (monster.buffs[i].time == 0){
-                    monster.buffs.RemoveAt(i);
-                }
-            }
-
-            buffTimer = 0;
         }
+        
 
 
-        if (player.nowHP <= 0) { 
+        GameManager.Inst.uiManager.UpdateStates();
+
+        if (states[0].nowHP <= 0)
+        { 
             ///game over
         }
-        else if (monster.nowHP <= 0) {
+        else if (states[1].nowHP <= 0)
+        {
             ///game over
         }
     }
     void UseBuff(int characterIndex, Buff buff){
-        if (characterIndex == 0){
-            Debug.Log(buff.name);
+        if (buff.name == "fired1"){
+            states[characterIndex].nowHP -= 50;
+            if (characterIndex == 0){
+                for (int i = 0; i < 3; i++) {
+                    GameManager.Inst.uiManager.HitEffect(i, "Fire1");
+                }
+            }
+            else GameManager.Inst.uiManager.HitEffect(3, "Fire1"); ;
         }
-        else {
-            Debug.Log(buff.name);
+        else if (buff.name == "fired2") {
+            states[characterIndex].nowHP -= 100;
+            if (characterIndex == 0){
+                for (int i = 0; i < 3; i++) {
+                    GameManager.Inst.uiManager.HitEffect(i, "Fire2");
+                }
+            }
+            else GameManager.Inst.uiManager.HitEffect(3, "Fire2"); ;
         }
     
     }
     void UseSkill(int characterIndex, Block block) {
-        if (characterIndex < 3){
-            if (block.GetType() == typeof(AttackBlock)) {
-                monster.nowHP -= ((AttackBlock)block).attack;
-                characterObjs[3].GetComponent<Animator>().SetTrigger("hit");
-            }
-            else if (block.GetType() == typeof(BuffBlock)) { }
-            else if (block.GetType() == typeof(IFBlock)) { }
-            else if (block.GetType() == typeof(MultipleBlock)) { }
+        int target = 1;
+        if (characterIndex == 3) target = 0;
 
-            if (block.buff != null) monster.buffs.Add(block.buff);
+        if (block.GetType() == typeof(AttackBlock)){
+            states[target].nowHP -= ((AttackBlock)block).attack; 
+            if (block.buff != null) states[target].buffs.Insert(0,block.buff);
+        }
+        else if (block.GetType() == typeof(BuffBlock)) { }
+        else if (block.GetType() == typeof(IFBlock)) { }
+        else if (block.GetType() == typeof(MultipleBlock)) { }
+
+        // call ui hit effect
+        if (target == 1){
+            GameManager.Inst.uiManager.HitEffect(3, block.effectName); ;
         }
         else {
-            if (block.GetType() == typeof(AttackBlock))
-            {
-                player.nowHP -= ((AttackBlock)block).attack;
-
-                for (int i = 0; i < 3; i++) {
-                    characterObjs[i].GetComponent<Animator>().SetTrigger("hit");
-                }
-
+            for (int i = 0; i < 3; i++) {
+                GameManager.Inst.uiManager.HitEffect(i, block.effectName); ;
             }
-            else if (block.GetType() == typeof(BuffBlock)) { }
-            else if (block.GetType() == typeof(IFBlock)) { }
-            else if (block.GetType() == typeof(MultipleBlock)) { }
-
-            GameManager.Inst.uiManager.UpdateStates();
         }
+
+        // buff 加成
+        if (block.name == "Oil")
+        {
+            Buff oiled = states[target].HaveBuff("oiled");
+            Buff fired1 = states[target].HaveBuff("fired1");
+            Buff fired2 = states[target].HaveBuff("fired2");
+            if (fired2 != null){
+                states[target].buffs.Remove(oiled);
+                fired2.count += 3;
+            }
+            else if (oiled != null && fired1 != null){
+                states[target].buffs.Remove(oiled);
+                states[target].buffs.Remove(fired1);
+                states[target].buffs.Add(new Buff("fired2", "大燃燒吧", 3));
+            }
+            else if (oiled != null) {
+                if (states[target].CountBuff("oiled") > 1) states[target].buffs.Remove(oiled);
+                oiled.count += 3;
+            }
+        }
+        else if (block.name == "FireBall")
+        {
+            Buff oiled = states[target].HaveBuff("oiled");
+            Buff fired1 = states[target].HaveBuff("fired1");
+            Buff fired2 = states[target].HaveBuff("fired2");
+            Buff wet = states[target].HaveBuff("wet");
+            if (wet != null && fired1 != null) {
+                states[target].buffs.Remove(fired1);
+                states[target].buffs.Remove(wet);
+            }
+            else if (fired2 != null) {
+                states[target].buffs.Remove(fired1);
+                fired2.count += 3;
+            }
+            else if (oiled != null && fired1 != null){
+                states[target].buffs.Remove(oiled);
+                states[target].buffs.Remove(fired1);
+                states[target].buffs.Add(new Buff("fired2", "大燃燒吧", 3));
+            }
+            else if (fired1 != null){
+                if (states[target].CountBuff("fired1") > 1) states[target].buffs.Remove(fired1);
+                fired1.count += 3;
+            }
+        }
+        else if (block.name == "WindSword") {
+            Buff fired2 = states[target].HaveBuff("fired2");
+            if (fired2 != null) {
+                states[target].buffs.Remove(fired2);
+                
+                UseSkill(characterIndex, new AttackBlock("explosion", "boom", 0, "Fire3", null, 300));              
+            }
+        }
+        else if (block.name == "WaterGun"){
+            Buff fired1 = states[target].HaveBuff("fired1");
+            Buff fired2 = states[target].HaveBuff("fired2");
+            Buff wet = states[target].HaveBuff("wet");
+            if (fired2 != null) {
+                states[target].buffs.Remove(fired2);
+                states[target].buffs.Remove(wet);
+                states[target].buffs.Add(new Buff("fired1", "燃燒吧", 3)); 
+            }
+            else if (fired1 != null) {
+                states[target].buffs.Remove(fired1);
+                states[target].buffs.Remove(wet);
+            }
+            else if (wet != null) {
+                if (states[target].CountBuff("wet")>1) states[target].buffs.Remove(wet);
+                wet.count += 3;
+            }
+        }
+              
     }
 }

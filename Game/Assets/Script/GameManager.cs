@@ -244,10 +244,6 @@ public class GameManager : MonoBehaviour {
         if (0 < startDelay && startDelay < 3) return;
         start = !start;
         if (start){
-            characterManager.characters[3].process = stageMonster.getProcess(0);
-            characterManager.resetGame();
-            atbTimer.ReStart();
-            uiManager.resetGame();
             startDelay = 0.0f;
             uiManager.startButtonText.text = "撤退";
         }
@@ -255,6 +251,11 @@ public class GameManager : MonoBehaviour {
             startDelay = 2.0f;
             uiManager.startButtonText.text = "出擊";
         }
+        characterManager.characters[3].process = stageMonster.getProcess(0);
+        characterManager.resetGame();
+        atbTimer.ReStart();
+        uiManager.resetGame();
+        uiManager.MyUpdate();
     }
 
 }
